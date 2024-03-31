@@ -1,0 +1,1 @@
+# medicalstore-manager
