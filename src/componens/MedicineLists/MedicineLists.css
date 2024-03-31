@@ -1,0 +1,74 @@
+.app-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.header {
+  text-align: center;
+  font-size: 30px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+.form-container {
+  margin-bottom: 20px;
+}
+.form-group {
+  margin-bottom: 20px;
+}
+label {
+  display: block;
+  margin-bottom: 6px;
+  margin-top: 6px;
+}
+input[type="text"],
+input[type="number"] {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+.add-button {
+  display: inline-block;
+  width: 48%;
+  padding: 10px;
+  margin-top: 10px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  box-sizing: border-box;
+  transition: background-color 0.3s ease;
+}
+
+.add-button:hover {
+  background-color: #45a049;
+}
+.update-message-box {
+  margin-bottom: 20px;
+}
+
+.update-message {
+  background-color: #cbedcc;
+  color: rgb(21, 15, 15);
+  padding: 10px;
+  border-radius: 5px;
+}
+.form-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+.view-medicine-container,
+.logout-container {
+  text-align: right;
+  margin-bottom: 20px;
+}
+.logout-button {
+  color: red;
+}
+.view-medicine-button {
+  color: #45a049;
+}
