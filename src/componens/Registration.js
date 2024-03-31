@@ -2,18 +2,14 @@ import React, { useState } from "react";
 import {
   Button,
   Grid,
-  MenuItem,
   Paper,
-  TextField,
   Avatar,
-  InputLabel,
-  Checkbox,
-  FormControlLabel,
   Typography,
 } from "@mui/material";
-import { Field, Form, Formik, ErrorMessage } from "formik";
 import AppRegistrationIcon from "@mui/icons-material/AppRegistration";
 import { useNavigate } from "react-router-dom";
+import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
+
 const Registration = () => {
   const paperStyle = {
     padding: 20,
@@ -44,6 +40,9 @@ const Registration = () => {
   };
   const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState("");
+  const [center, setCenter] = useState({ lat: 0, lng: 0 });
+  const [mapUrl, setMapUrl] = useState("");
+
   const HandleSubmit = async (values, props) => {
     try {
       console.log("Form Values:", values);
@@ -87,8 +86,6 @@ const Registration = () => {
 
       localStorage.setItem("areaId", "65f8c337701d44c75ec1c9d7");
 
-      // navigate("/signin");
-
       setTimeout(() => {
         props.resetForm();
         props.setSubmitting(false);
@@ -101,6 +98,17 @@ const Registration = () => {
 
   const handleNavigateToSignin = () => {
     navigate("/signin");
+  };
+  const handleGetLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition((position) => {
+        const { latitude, longitude } = position.coords;
+        setCenter({ lat: latitude, lng: longitude });
+        setMapUrl(`https://www.google.com/maps?q=${latitude},${longitude}`);
+      });
+    } else {
+      alert("Geolocation is not supported by your browser.");
+    }
   };
 
   return (
@@ -164,7 +172,6 @@ const Registration = () => {
                     borderRadius: "4px",
                     border: "1px solid #ccc",
                   }}
-
                 />
               </div>
 
@@ -216,23 +223,6 @@ const Registration = () => {
               <div style={{ marginBottom: "20px" }}>
                 <input
                   type="number"
-                  name="location.coordinates.0"
-                  placeholder="Latitude"
-                />
-              </div>
-              <div style={{ marginBottom: "20px" }}>
-                <input
-                  type="number"
-                  name="location.coordinates.1"
-                  placeholder="Longitude"
-                />
-              </div>
-              <div style={{ marginBottom: "20px" }}>
-                <input type="text" name="mapUrl" placeholder="Enter map URL" />
-              </div>
-              <div style={{ marginBottom: "20px" }}>
-                <input
-                  type="number"
                   name="rating"
                   placeholder="Enter rating"
                   step="0.1"
@@ -241,7 +231,72 @@ const Registration = () => {
                   required
                 />
               </div>
-
+              <div style={{ marginBottom: "20px" }}>
+                <div style={{ display: "flex"}}>
+                  <div style={{ marginRight: "10px" }}>
+                    <label>Latitude</label>
+                    <input
+                      type="text"
+                      value={center.lat}
+                      readOnly
+                      style={{
+                        width: "94%",
+                        padding: "10px",
+                        borderRadius: "4px",
+                        border: "1px solid #ccc",
+                      }}
+                    />
+                  </div>
+                  <div >
+                    <label>Longitude</label>
+                    <input
+                      type="text"
+                      value={center.lng}
+                      readOnly
+                      style={{
+                        width: "96%",
+                        padding: "10px",
+                        borderRadius: "4px",
+                        border: "1px solid #ccc",
+                      }}
+                    />
+                  </div>
+                </div>
+                <label>Map URL</label>
+                <div>
+                  <input
+                    label="Map URL"
+                    variant="outlined"
+                    fullWidth
+                    placeholder="Enter map url"
+                    value={mapUrl}
+                    style={{
+                      width: "94%",
+                      padding: "10px",
+                      marginBottom: "10px",
+                      borderRadius: "4px",
+                      border: "1px solid #ccc",
+                    }}
+                  />
+                </div>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={handleGetLocation}
+                  style={{ background: "#4CAF50" , marginBottom: "10px" , width: "50%"}}
+                >
+                  Get Location
+                </Button>
+                <LoadScript googleMapsApiKey="AIzaSyDtTeKzLdvEensF5z-LUodFfRDTv-WMnkA">
+                  <GoogleMap
+                    mapContainerStyle={{ width: "100%", height: "150px" }}
+                    center={center}
+                    zoom={13}
+                  >
+                    <Marker position={center} />
+                  </GoogleMap>
+                </LoadScript>
+              </div>
               <label>Services</label>
               <div
                 style={{
