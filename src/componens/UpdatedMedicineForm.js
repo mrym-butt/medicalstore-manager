@@ -8,6 +8,11 @@ const UpdatedMedicineForm = ({ isOpen, onSave, onCancel, selectedMedicine, pharm
     quantity: "",
     price: "",
   });
+  const [formErrors, setFormErrors] = useState({
+    name: false,
+    quantity: false,
+    price: false,
+  });
 
   useEffect(() => {
     if (selectedMedicine) {
@@ -28,37 +33,51 @@ const UpdatedMedicineForm = ({ isOpen, onSave, onCancel, selectedMedicine, pharm
   };
 
   const handleSave = async () => {
-    try {
-      const response = await fetch(`https://nearest-pharma-be.vercel.app/pharmacy/updateMedicineQuantity/${pharmacyId}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          pharmacyId: pharmacyId,
-          medicineId: selectedMedicine.medicineId,
-          medicineQuantity: formData.quantity,
-          price: formData.price,
-          medicineName: formData.name,
-        }),
-      });
+    if (validateForm()) {
+      try {
+        const response = await fetch(`https://nearest-pharma-be.vercel.app/pharmacy/updateMedicineQuantity/${pharmacyId}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            pharmacyId: pharmacyId,
+            medicineId: selectedMedicine.medicineId,
+            medicineQuantity: formData.quantity,
+            price: formData.price,
+            medicineName: formData.name,
+          }),
+        });
 
-      if (!response.ok) {
-        throw new Error("Failed to update medicine quantity");
+        if (!response.ok) {
+          throw new Error("Failed to update medicine quantity");
+        }
+
+        // Optionally handle successful response
+        console.log("Medicine quantity updated successfully");
+
+        // Call onSave to update the form data in the parent component
+        onSave(formData);
+
+        // Call onCancel to close the form
+        onCancel();
+      } catch (error) {
+        console.error("Error updating medicine quantity:", error);
+        // Optionally handle error
       }
-
-      // Optionally handle successful response
-      console.log("Medicine quantity updated successfully");
-
-      // Call onSave to update the form data in the parent component
-      onSave(formData);
-
-      // Call onCancel to close the form
-      onCancel();
-    } catch (error) {
-      console.error("Error updating medicine quantity:", error);
-      // Optionally handle error
+    } else {
+      console.log("Please fill in all required fields.");
     }
+  };
+
+  const validateForm = () => {
+    const errors = {
+      name: formData.name.trim() === "",
+      quantity: formData.quantity.trim() === "",
+      price: formData.price.trim() === "",
+    };
+    setFormErrors(errors);
+    return !(errors.name || errors.quantity || errors.price);
   };
 
   return (
@@ -74,6 +93,8 @@ const UpdatedMedicineForm = ({ isOpen, onSave, onCancel, selectedMedicine, pharm
                 name="name"
                 value={formData.name}
                 onChange={handleInputChange}
+                error={formErrors.name}
+                helperText={formErrors.name ? "Name is required" : ""}
                 className="input-field"
               />
             </Grid>
@@ -85,6 +106,8 @@ const UpdatedMedicineForm = ({ isOpen, onSave, onCancel, selectedMedicine, pharm
                 type="number"
                 value={formData.quantity}
                 onChange={handleInputChange}
+                error={formErrors.quantity}
+                helperText={formErrors.quantity ? "Quantity is required" : ""}
                 className="input-field"
               />
             </Grid>
@@ -96,6 +119,8 @@ const UpdatedMedicineForm = ({ isOpen, onSave, onCancel, selectedMedicine, pharm
                 type="number"
                 value={formData.price}
                 onChange={handleInputChange}
+                error={formErrors.price}
+                helperText={formErrors.price ? "Price is required" : ""}
                 className="input-field"
               />
             </Grid>
